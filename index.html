@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMS Mairie – Administration</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bleu: #1a3a5c;
+  --bleu-vif: #1e5fa8;
+  --bleu-clair: #e8f0fa;
+  --bleu-pale: #f0f5fc;
+  --rouge: #c0392b;
+  --vert: #1a7a4a;
+  --vert-clair: #e8f7ef;
+  --or: #c9a84c;
+  --gris: #6b7280;
+  --gris-clair: #f4f6f9;
+  --blanc: #ffffff;
+  --texte: #1a2540;
+  --ombre: 0 2px 16px rgba(26,58,92,0.10);
+  --ombre-forte: 0 8px 32px rgba(26,58,92,0.18);
+  --radius: 12px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--gris-clair);
+  color: var(--texte);
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: 260px;
+  background: var(--bleu);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  z-index: 100;
+  transition: width 0.3s;
+}
+
+.sidebar-logo {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-logo .logo-icon {
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+.sidebar-logo h2 {
+  font-family: 'DM Serif Display', serif;
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+.sidebar-logo p {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-section-label {
+  color: rgba(255,255,255,0.35);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 12px 12px 6px;
+  font-weight: 600;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+.nav-item.active {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  box-shadow: inset 3px 0 0 var(--or);
+}
+
+.nav-item .icon { font-size: 1.1rem; width: 22px; text-align: center; }
+
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.07);
+}
+
+.avatar {
+  width: 36px; height: 36px;
+  background: var(--or);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; color: var(--bleu); font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.user-info .name { color: #fff; font-size: 0.85rem; font-weight: 600; }
+.user-info .role { color: rgba(255,255,255,0.4); font-size: 0.72rem; }
+
+/* ===== MAIN ===== */
+.main {
+  margin-left: 260px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: var(--blanc);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+  position: sticky; top: 0; z-index: 50;
+}
+
+.topbar h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: var(--bleu);
+}
+
+.topbar-actions { display: flex; gap: 12px; align-items: center; }
+
+.btn {
+  padding: 9px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+
+.btn-primary { background: var(--bleu-vif); color: #fff; }
+.btn-primary:hover { background: var(--bleu); transform: translateY(-1px); box-shadow: var(--ombre); }
+
+.btn-danger { background: #fef2f2; color: var(--rouge); }
+.btn-danger:hover { background: #fee2e2; }
+
+.btn-success { background: var(--vert-clair); color: var(--vert); }
+.btn-success:hover { background: #bbf7d0; }
+
+.btn-ghost { background: var(--gris-clair); color: var(--gris); }
+.btn-ghost:hover { background: #e5e7eb; color: var(--texte); }
+
+.btn-sm { padding: 6px 14px; font-size: 0.8rem; }
+
+/* ===== CONTENT ===== */
+.content { padding: 28px 32px; flex: 1; }
+
+/* Pages */
+.page { display: none; }
+.page.active { display: block; animation: fadeUp 0.3s ease; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== DASHBOARD ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: var(--blanc);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--ombre);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-left: 4px solid transparent;
+  transition: all 0.2s;
+}
+
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--ombre-forte); }
+.stat-card.blue { border-left-color: var(--bleu-vif); }
+.stat-card.green { border-left-color: var(--vert); }
+.stat-card.orange { border-left-color: #e67e22; }
+.stat-card.red { border-left-color: var(--rouge); }
+
+.stat-icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.stat-card.blue .stat-icon { background: var(--bleu-clair); }
+.stat-card.green .stat-icon { background: var(--vert-clair); }
+.stat-card.orange .stat-icon { background: #fef3e2; }
+.stat-card.red .stat-icon { background: #fef2f2; }
+
+.stat-info .value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--texte);
+  font-family: 'DM Serif Display', serif;
+  line-height: 1;
+}
+
+.stat-info .label {
+  color: var(--gris);
+  font-size: 0.82rem;
+  margin-top: 4px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--blanc);
+  border-radius: var(--radius);
+  box-shadow: var(--ombre);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid #f0f2f5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-header h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  color: var(--bleu);
+}
+
+.card-body { padding: 20px 24px; }
+
+/* ===== TABLEAU ===== */
+.table-container { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+thead th {
+  padding: 12px 16px;
+  text-align: left;
+  color: var(--gris);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  border-bottom: 2px solid #f0f2f5;
+  background: #fafbfc;
+}
+
+tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f4f6f9;
+  vertical-align: middle;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--bleu-pale); }
+
+/* ===== BADGES ===== */
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+
+.badge-success { background: var(--vert-clair); color: var(--vert); }
+.badge-warning { background: #fef3e2; color: #b45309; }
+.badge-danger { background: #fef2f2; color: var(--rouge); }
+.badge-info { background: var(--bleu-clair); color: var(--bleu-vif); }
+
+/* ===== FORMULAIRE MODAL ===== */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(10,20,40,0.55);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-overlay.show { display: flex; }
+
+.modal {
+  background: var(--blanc);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 560px;
+  box-shadow: var(--ombre-forte);
+  animation: modalIn 0.25s ease;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  padding: 22px 28px 16px;
+  border-bottom: 1px solid #f0f2f5;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.modal-header h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  color: var(--bleu);
+}
+
+.modal-close {
+  background: none; border: none; cursor: pointer;
+  font-size: 1.3rem; color: var(--gris); line-height: 1;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.modal-close:hover { background: var(--gris-clair); }
+
+.modal-body { padding: 22px 28px; }
+.modal-footer { padding: 16px 28px 22px; display: flex; gap: 10px; justify-content: flex-end; }
+
+/* ===== FORM ===== */
+.form-group { margin-bottom: 16px; }
+
+.form-group label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--texte);
+  margin-bottom: 6px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  color: var(--texte);
+  transition: border-color 0.2s;
+  background: var(--blanc);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--bleu-vif);
+  box-shadow: 0 0 0 3px rgba(30,95,168,0.1);
+}
+
+select.form-control { cursor: pointer; }
+textarea.form-control { resize: vertical; min-height: 90px; }
+
+/* ===== LISTE ITEMS ===== */
+.item-list { display: flex; flex-direction: column; gap: 12px; }
+
+.item-card {
+  border: 1px solid #e9ecf0;
+  border-radius: 10px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition: all 0.2s;
+  background: var(--blanc);
+}
+
+.item-card:hover { border-color: var(--bleu-vif); box-shadow: var(--ombre); }
+
+.item-card .item-icon {
+  font-size: 1.5rem;
+  width: 44px; height: 44px;
+  background: var(--bleu-clair);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.item-card .item-body { flex: 1; min-width: 0; }
+.item-card .item-title { font-weight: 600; color: var(--texte); font-size: 0.92rem; margin-bottom: 4px; }
+.item-card .item-desc { color: var(--gris); font-size: 0.8rem; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-card .item-meta { display: flex; gap: 8px; margin-top: 6px; align-items: center; flex-wrap: wrap; }
+
+.item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* ===== PAGE PUBLIQUE ===== */
+.public-view {
+  background: linear-gradient(135deg, #f0f5fc 0%, #e8f0fa 100%);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 2px solid #d0ddef;
+}
+
+.public-header {
+  background: var(--bleu);
+  color: #fff;
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.public-header .mairie-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.3rem;
+}
+
+.public-header .mairie-sub { font-size: 0.78rem; opacity: 0.6; }
+
+.public-nav {
+  background: var(--bleu-vif);
+  padding: 0 28px;
+  display: flex; gap: 0;
+}
+
+.public-nav a {
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  padding: 12px 18px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.public-nav a:hover, .public-nav a.active { color: #fff; border-bottom-color: var(--or); }
+
+.public-content { padding: 24px 28px; }
+
+.public-news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.news-card {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  transition: all 0.2s;
+}
+
+.news-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+
+.news-card-img {
+  height: 90px;
+  background: linear-gradient(135deg, var(--bleu) 0%, var(--bleu-vif) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem;
+}
+
+.news-card-body { padding: 12px; }
+.news-card-cat { font-size: 0.68rem; color: var(--bleu-vif); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.news-card-title { font-size: 0.85rem; font-weight: 600; color: var(--texte); margin: 4px 0; line-height: 1.3; }
+.news-card-date { font-size: 0.72rem; color: var(--gris); }
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--gris);
+}
+
+.empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
+.empty-state p { font-size: 0.9rem; }
+
+/* ===== TOAST ===== */
+.toast-container {
+  position: fixed;
+  top: 20px; right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  background: var(--blanc);
+  border-radius: 10px;
+  padding: 14px 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-left: 4px solid var(--vert);
+  animation: toastIn 0.3s ease;
+  max-width: 300px;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .sidebar { width: 64px; }
+  .sidebar-logo h2, .sidebar-logo p, .nav-item span, .nav-section-label, .user-info .name, .user-info .role { display: none; }
+  .main { margin-left: 64px; }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .topbar, .content { padding-left: 20px; padding-right: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🏛️</div>
+    <h2>MairieCMS</h2>
+    <p>Portail d'administration</p>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Principal</div>
+    <button class="nav-item active" onclick="showPage('dashboard', this)">
+      <span class="icon">📊</span><span>Tableau de bord</span>
+    </button>
+    <button class="nav-item" onclick="showPage('actualites', this)">
+      <span class="icon">📰</span><span>Actualités</span>
+    </button>
+    <button class="nav-item" onclick="showPage('services', this)">
+      <span class="icon">⚙️</span><span>Services</span>
+    </button>
+    <button class="nav-item" onclick="showPage('annonces', this)">
+      <span class="icon">📢</span><span>Annonces</span>
+    </button>
+    <div class="nav-section-label">Aperçu</div>
+    <button class="nav-item" onclick="showPage('public', this)">
+      <span class="icon">🌐</span><span>Vue publique</span>
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="avatar">AD</div>
+      <div>
+        <div class="name">Administrateur</div>
+        <div class="role">Super Admin</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <h1 id="page-title">Tableau de bord</h1>
+    <div class="topbar-actions">
+      <span style="font-size:0.8rem;color:var(--gris);">🟢 En ligne</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card blue">
+          <div class="stat-icon">📰</div>
+          <div class="stat-info">
+            <div class="value" id="stat-actu">0</div>
+            <div class="label">Actualités publiées</div>
+          </div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon">⚙️</div>
+          <div class="stat-info">
+            <div class="value" id="stat-services">0</div>
+            <div class="label">Services actifs</div>
+          </div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon">📢</div>
+          <div class="stat-info">
+            <div class="value" id="stat-annonces">0</div>
+            <div class="label">Annonces en cours</div>
+          </div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <div class="value">1</div>
+            <div class="label">Administrateurs</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <h3>Dernières actualités</h3>
+            <button class="btn btn-primary btn-sm" onclick="showPage('actualites', null); openModal('modal-actu')">+ Ajouter</button>
+          </div>
+          <div class="card-body">
+            <div id="dashboard-actu-list"><div class="empty-state"><div class="empty-icon">📭</div><p>Aucune actualité pour l'instant</p></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Annonces récentes</h3></div>
+          <div class="card-body">
+            <div id="dashboard-annonce-list"><div class="empty-state"><div class="empty-icon">🔔</div><p>Aucune annonce</p></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTUALITES -->
+    <div class="page" id="page-actualites">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <p style="color:var(--gris);font-size:0.9rem;">Gérez les actualités publiées sur le site de la mairie.</p>
+        <button class="btn btn-primary" onclick="openModal('modal-actu')">+ Nouvelle actualité</button>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="item-list" id="actu-list">
+            <div class="empty-state"><div class="empty-icon">📰</div><p>Aucune actualité. Cliquez sur "+ Nouvelle actualité" pour commencer.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICES -->
+    <div class="page" id="page-services">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <p style="color:var(--gris);font-size:0.9rem;">Répertoriez les services proposés aux citoyens.</p>
+        <button class="btn btn-primary" onclick="openModal('modal-service')">+ Nouveau service</button>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="item-list" id="service-list">
+            <div class="empty-state"><div class="empty-icon">⚙️</div><p>Aucun service enregistré.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANNONCES -->
+    <div class="page" id="page-annonces">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <p style="color:var(--gris);font-size:0.9rem;">Publiez des avis officiels et annonces importantes.</p>
+        <button class="btn btn-primary" onclick="openModal('modal-annonce')">+ Nouvelle annonce</button>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="item-list" id="annonce-list">
+            <div class="empty-state"><div class="empty-icon">📢</div><p>Aucune annonce publiée.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VUE PUBLIQUE -->
+    <div class="page" id="page-public">
+      <p style="color:var(--gris);font-size:0.9rem;margin-bottom:16px;">Aperçu de la façon dont les citoyens voient votre site.</p>
+      <div class="public-view">
+        <div class="public-header">
+          <div style="font-size:2rem;">🏛️</div>
+          <div>
+            <div class="mairie-name">Mairie de Yaoundé</div>
+            <div class="mairie-sub">Portail officiel des services municipaux</div>
+          </div>
+        </div>
+        <div class="public-nav">
+          <a href="#" class="active">Accueil</a>
+          <a href="#">Actualités</a>
+          <a href="#">Services</a>
+          <a href="#">Contact</a>
+        </div>
+        <div class="public-content">
+          <h3 style="font-family:'DM Serif Display',serif;color:var(--bleu);margin-bottom:16px;font-size:1.1rem;">📰 Dernières actualités</h3>
+          <div class="public-news-grid" id="public-news">
+            <div class="empty-state"><p>Aucune actualité publiée pour l'instant.</p></div>
+          </div>
+          <h3 style="font-family:'DM Serif Display',serif;color:var(--bleu);margin:24px 0 16px;font-size:1.1rem;">⚙️ Nos services</h3>
+          <div id="public-services" style="display:flex;flex-wrap:wrap;gap:10px;">
+            <div class="empty-state" style="width:100%;"><p>Aucun service disponible.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- MODAL ACTUALITÉ -->
+<div class="modal-overlay" id="modal-actu">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-actu-title">Nouvelle actualité</h3>
+      <button class="modal-close" onclick="closeModal('modal-actu')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="actu-edit-id">
+      <div class="form-group">
+        <label>Titre *</label>
+        <input type="text" class="form-control" id="actu-titre" placeholder="Titre de l'actualité">
+      </div>
+      <div class="form-group">
+        <label>Catégorie</label>
+        <select class="form-control" id="actu-cat">
+          <option>Événement</option>
+          <option>Communiqué</option>
+          <option>Travaux</option>
+          <option>Culture</option>
+          <option>Santé</option>
+          <option>Éducation</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Contenu *</label>
+        <textarea class="form-control" id="actu-contenu" placeholder="Décrivez l'actualité..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Statut</label>
+        <select class="form-control" id="actu-statut">
+          <option value="publie">Publié</option>
+          <option value="brouillon">Brouillon</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-actu')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveActu()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SERVICE -->
+<div class="modal-overlay" id="modal-service">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-service-title">Nouveau service</h3>
+      <button class="modal-close" onclick="closeModal('modal-service')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="service-edit-id">
+      <div class="form-group">
+        <label>Nom du service *</label>
+        <input type="text" class="form-control" id="service-nom" placeholder="Ex: État civil, Urbanisme...">
+      </div>
+      <div class="form-group">
+        <label>Icône (emoji)</label>
+        <input type="text" class="form-control" id="service-icon" placeholder="📋" maxlength="2">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea class="form-control" id="service-desc" placeholder="Décrivez le service..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Horaires</label>
+        <input type="text" class="form-control" id="service-horaire" placeholder="Lun-Ven : 8h-15h">
+      </div>
+      <div class="form-group">
+        <label>Statut</label>
+        <select class="form-control" id="service-statut">
+          <option value="actif">Actif</option>
+          <option value="inactif">Inactif</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-service')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveService()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ANNONCE -->
+<div class="modal-overlay" id="modal-annonce">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-annonce-title">Nouvelle annonce</h3>
+      <button class="modal-close" onclick="closeModal('modal-annonce')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="annonce-edit-id">
+      <div class="form-group">
+        <label>Titre *</label>
+        <input type="text" class="form-control" id="annonce-titre" placeholder="Titre de l'annonce">
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select class="form-control" id="annonce-type">
+          <option>Avis officiel</option>
+          <option>Appel d'offres</option>
+          <option>Fermeture</option>
+          <option>Alerte</option>
+          <option>Recrutement</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Contenu *</label>
+        <textarea class="form-control" id="annonce-contenu" placeholder="Contenu de l'annonce..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Date d'expiration</label>
+        <input type="date" class="form-control" id="annonce-expiry">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-annonce')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveAnnonce()">Publier</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ===== DATA =====
+let data = {
+  actualites: JSON.parse(localStorage.getItem('cms_actualites') || '[]'),
+  services: JSON.parse(localStorage.getItem('cms_services') || '[]'),
+  annonces: JSON.parse(localStorage.getItem('cms_annonces') || '[]'),
+};
+
+function saveData(type) {
+  localStorage.setItem('cms_' + type, JSON.stringify(data[type]));
+}
+
+// ===== NAVIGATION =====
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  const titles = {dashboard:'Tableau de bord', actualites:'Actualités', services:'Services', annonces:'Annonces', public:'Vue publique'};
+  document.getElementById('page-title').textContent = titles[id] || id;
+  if (id === 'public') renderPublic();
+}
+
+// ===== MODALS =====
+function openModal(id, editData = null) {
+  document.getElementById(id).classList.add('show');
+  if (id === 'modal-actu') {
+    document.getElementById('modal-actu-title').textContent = editData ? 'Modifier l\'actualité' : 'Nouvelle actualité';
+    document.getElementById('actu-edit-id').value = editData ? editData.id : '';
+    document.getElementById('actu-titre').value = editData ? editData.titre : '';
+    document.getElementById('actu-cat').value = editData ? editData.cat : 'Événement';
+    document.getElementById('actu-contenu').value = editData ? editData.contenu : '';
+    document.getElementById('actu-statut').value = editData ? editData.statut : 'publie';
+  }
+  if (id === 'modal-service') {
+    document.getElementById('modal-service-title').textContent = editData ? 'Modifier le service' : 'Nouveau service';
+    document.getElementById('service-edit-id').value = editData ? editData.id : '';
+    document.getElementById('service-nom').value = editData ? editData.nom : '';
+    document.getElementById('service-icon').value = editData ? editData.icon : '📋';
+    document.getElementById('service-desc').value = editData ? editData.desc : '';
+    document.getElementById('service-horaire').value = editData ? editData.horaire : '';
+    document.getElementById('service-statut').value = editData ? editData.statut : 'actif';
+  }
+  if (id === 'modal-annonce') {
+    document.getElementById('modal-annonce-title').textContent = editData ? 'Modifier l\'annonce' : 'Nouvelle annonce';
+    document.getElementById('annonce-edit-id').value = editData ? editData.id : '';
+    document.getElementById('annonce-titre').value = editData ? editData.titre : '';
+    document.getElementById('annonce-type').value = editData ? editData.type : 'Avis officiel';
+    document.getElementById('annonce-contenu').value = editData ? editData.contenu : '';
+    document.getElementById('annonce-expiry').value = editData ? editData.expiry : '';
+  }
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
+  });
+});
+
+// ===== ACTUALITÉS =====
+function saveActu() {
+  const titre = document.getElementById('actu-titre').value.trim();
+  const contenu = document.getElementById('actu-contenu').value.trim();
+  if (!titre || !contenu) { toast('Veuillez remplir tous les champs obligatoires.', 'error'); return; }
+  
+  const id = document.getElementById('actu-edit-id').value;
+  const item = {
+    id: id || Date.now().toString(),
+    titre,
+    cat: document.getElementById('actu-cat').value,
+    contenu,
+    statut: document.getElementById('actu-statut').value,
+    date: new Date().toLocaleDateString('fr-FR'),
+  };
+
+  if (id) {
+    const idx = data.actualites.findIndex(a => a.id === id);
+    if (idx !== -1) data.actualites[idx] = item;
+  } else {
+    data.actualites.unshift(item);
+  }
+
+  saveData('actualites');
+  closeModal('modal-actu');
+  renderActu();
+  renderDashboard();
+  toast(id ? 'Actualité mise à jour !' : 'Actualité publiée avec succès !');
+}
+
+function deleteActu(id) {
+  if (!confirm('Supprimer cette actualité ?')) return;
+  data.actualites = data.actualites.filter(a => a.id !== id);
+  saveData('actualites');
+  renderActu();
+  renderDashboard();
+  toast('Actualité supprimée.', 'warning');
+}
+
+function renderActu() {
+  const list = document.getElementById('actu-list');
+  if (!data.actualites.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📰</div><p>Aucune actualité. Cliquez sur "+ Nouvelle actualité" pour commencer.</p></div>';
+    return;
+  }
+  list.innerHTML = data.actualites.map(a => `
+    <div class="item-card">
+      <div class="item-icon">${getCatIcon(a.cat)}</div>
+      <div class="item-body">
+        <div class="item-title">${a.titre}</div>
+        <div class="item-desc">${a.contenu}</div>
+        <div class="item-meta">
+          <span class="badge badge-info">${a.cat}</span>
+          <span class="badge ${a.statut === 'publie' ? 'badge-success' : 'badge-warning'}">${a.statut === 'publie' ? '✅ Publié' : '✏️ Brouillon'}</span>
+          <span style="font-size:0.75rem;color:var(--gris);">📅 ${a.date}</span>
+        </div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openModal('modal-actu', ${JSON.stringify(a).replace(/"/g,'&quot;')})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteActu('${a.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== SERVICES =====
+function saveService() {
+  const nom = document.getElementById('service-nom').value.trim();
+  if (!nom) { toast('Veuillez saisir le nom du service.', 'error'); return; }
+  
+  const id = document.getElementById('service-edit-id').value;
+  const item = {
+    id: id || Date.now().toString(),
+    nom,
+    icon: document.getElementById('service-icon').value || '📋',
+    desc: document.getElementById('service-desc').value,
+    horaire: document.getElementById('service-horaire').value,
+    statut: document.getElementById('service-statut').value,
+  };
+
+  if (id) {
+    const idx = data.services.findIndex(s => s.id === id);
+    if (idx !== -1) data.services[idx] = item;
+  } else {
+    data.services.push(item);
+  }
+
+  saveData('services');
+  closeModal('modal-service');
+  renderServices();
+  renderDashboard();
+  toast(id ? 'Service mis à jour !' : 'Service ajouté !');
+}
+
+function deleteService(id) {
+  if (!confirm('Supprimer ce service ?')) return;
+  data.services = data.services.filter(s => s.id !== id);
+  saveData('services');
+  renderServices();
+  renderDashboard();
+  toast('Service supprimé.', 'warning');
+}
+
+function renderServices() {
+  const list = document.getElementById('service-list');
+  if (!data.services.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">⚙️</div><p>Aucun service enregistré.</p></div>';
+    return;
+  }
+  list.innerHTML = data.services.map(s => `
+    <div class="item-card">
+      <div class="item-icon">${s.icon}</div>
+      <div class="item-body">
+        <div class="item-title">${s.nom}</div>
+        <div class="item-desc">${s.desc || 'Aucune description'}</div>
+        <div class="item-meta">
+          <span class="badge ${s.statut === 'actif' ? 'badge-success' : 'badge-danger'}">${s.statut === 'actif' ? '✅ Actif' : '❌ Inactif'}</span>
+          ${s.horaire ? `<span style="font-size:0.75rem;color:var(--gris);">🕐 ${s.horaire}</span>` : ''}
+        </div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openModal('modal-service', ${JSON.stringify(s).replace(/"/g,'&quot;')})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteService('${s.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== ANNONCES =====
+function saveAnnonce() {
+  const titre = document.getElementById('annonce-titre').value.trim();
+  const contenu = document.getElementById('annonce-contenu').value.trim();
+  if (!titre || !contenu) { toast('Veuillez remplir tous les champs obligatoires.', 'error'); return; }
+  
+  const id = document.getElementById('annonce-edit-id').value;
+  const item = {
+    id: id || Date.now().toString(),
+    titre,
+    type: document.getElementById('annonce-type').value,
+    contenu,
+    expiry: document.getElementById('annonce-expiry').value,
+    date: new Date().toLocaleDateString('fr-FR'),
+  };
+
+  if (id) {
+    const idx = data.annonces.findIndex(a => a.id === id);
+    if (idx !== -1) data.annonces[idx] = item;
+  } else {
+    data.annonces.unshift(item);
+  }
+
+  saveData('annonces');
+  closeModal('modal-annonce');
+  renderAnnonces();
+  renderDashboard();
+  toast(id ? 'Annonce mise à jour !' : 'Annonce publiée !');
+}
+
+function deleteAnnonce(id) {
+  if (!confirm('Supprimer cette annonce ?')) return;
+  data.annonces = data.annonces.filter(a => a.id !== id);
+  saveData('annonces');
+  renderAnnonces();
+  renderDashboard();
+  toast('Annonce supprimée.', 'warning');
+}
+
+function renderAnnonces() {
+  const list = document.getElementById('annonce-list');
+  if (!data.annonces.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📢</div><p>Aucune annonce publiée.</p></div>';
+    return;
+  }
+  list.innerHTML = data.annonces.map(a => `
+    <div class="item-card">
+      <div class="item-icon">${getAnnonceIcon(a.type)}</div>
+      <div class="item-body">
+        <div class="item-title">${a.titre}</div>
+        <div class="item-desc">${a.contenu}</div>
+        <div class="item-meta">
+          <span class="badge badge-info">${a.type}</span>
+          <span style="font-size:0.75rem;color:var(--gris);">📅 ${a.date}</span>
+          ${a.expiry ? `<span style="font-size:0.75rem;color:var(--gris);">⏳ Expire: ${a.expiry}</span>` : ''}
+        </div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openModal('modal-annonce', ${JSON.stringify(a).replace(/"/g,'&quot;')})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteAnnonce('${a.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== VUE PUBLIQUE =====
+function renderPublic() {
+  const newsGrid = document.getElementById('public-news');
+  const pubActu = data.actualites.filter(a => a.statut === 'publie');
+  if (!pubActu.length) {
+    newsGrid.innerHTML = '<div class="empty-state"><p>Aucune actualité publiée pour l\'instant.</p></div>';
+  } else {
+    newsGrid.innerHTML = pubActu.slice(0, 6).map(a => `
+      <div class="news-card">
+        <div class="news-card-img">${getCatIcon(a.cat)}</div>
+        <div class="news-card-body">
+          <div class="news-card-cat">${a.cat}</div>
+          <div class="news-card-title">${a.titre}</div>
+          <div class="news-card-date">📅 ${a.date}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  const servicesDiv = document.getElementById('public-services');
+  const actifServices = data.services.filter(s => s.statut === 'actif');
+  if (!actifServices.length) {
+    servicesDiv.innerHTML = '<div class="empty-state" style="width:100%;"><p>Aucun service disponible.</p></div>';
+  } else {
+    servicesDiv.innerHTML = actifServices.map(s => `
+      <div style="background:#fff;border:1px solid #e0e7f0;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;min-width:180px;">
+        <span style="font-size:1.5rem;">${s.icon}</span>
+        <div>
+          <div style="font-weight:600;font-size:0.85rem;color:var(--bleu);">${s.nom}</div>
+          ${s.horaire ? `<div style="font-size:0.72rem;color:var(--gris);">${s.horaire}</div>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  document.getElementById('stat-actu').textContent = data.actualites.filter(a => a.statut === 'publie').length;
+  document.getElementById('stat-services').textContent = data.services.filter(s => s.statut === 'actif').length;
+  document.getElementById('stat-annonces').textContent = data.annonces.length;
+
+  const dashActu = document.getElementById('dashboard-actu-list');
+  if (!data.actualites.length) {
+    dashActu.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>Aucune actualité</p></div>';
+  } else {
+    dashActu.innerHTML = `<div class="table-container"><table>
+      <thead><tr><th>Titre</th><th>Catégorie</th><th>Statut</th><th>Date</th></tr></thead>
+      <tbody>${data.actualites.slice(0,5).map(a => `
+        <tr>
+          <td style="font-weight:500;">${a.titre}</td>
+          <td><span class="badge badge-info">${a.cat}</span></td>
+          <td><span class="badge ${a.statut === 'publie' ? 'badge-success' : 'badge-warning'}">${a.statut === 'publie' ? 'Publié' : 'Brouillon'}</span></td>
+          <td style="color:var(--gris);font-size:0.8rem;">${a.date}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+  }
+
+  const dashAnnonce = document.getElementById('dashboard-annonce-list');
+  if (!data.annonces.length) {
+    dashAnnonce.innerHTML = '<div class="empty-state"><div class="empty-icon">🔔</div><p>Aucune annonce</p></div>';
+  } else {
+    dashAnnonce.innerHTML = data.annonces.slice(0,4).map(a => `
+      <div style="padding:10px 0;border-bottom:1px solid #f0f2f5;">
+        <div style="font-weight:600;font-size:0.85rem;">${getAnnonceIcon(a.type)} ${a.titre}</div>
+        <div style="font-size:0.75rem;color:var(--gris);margin-top:2px;">${a.type} · ${a.date}</div>
+      </div>
+    `).join('');
+  }
+}
+
+// ===== HELPERS =====
+function getCatIcon(cat) {
+  const icons = {Événement:'🎉', Communiqué:'📋', Travaux:'🔧', Culture:'🎨', Santé:'🏥', Éducation:'🎓'};
+  return icons[cat] || '📰';
+}
+
+function getAnnonceIcon(type) {
+  const icons = {'Avis officiel':'📜','Appel d\'offres':'💼','Fermeture':'🚫','Alerte':'⚠️','Recrutement':'👔'};
+  return icons[type] || '📢';
+}
+
+function toast(msg, type = 'success') {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.style.borderLeftColor = type === 'error' ? 'var(--rouge)' : type === 'warning' ? '#e67e22' : 'var(--vert)';
+  el.innerHTML = `<span>${type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '✅'}</span><span>${msg}</span>`;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ===== INIT =====
+renderActu();
+renderServices();
+renderAnnonces();
+renderDashboard();
+</script>
+</body>
+</html>
